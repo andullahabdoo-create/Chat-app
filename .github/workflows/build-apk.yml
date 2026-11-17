@@ -17,16 +17,14 @@ jobs:
         run: |
           npm install
           npm run build
-      - name: Setup Capacitor Android
+      - name: Setup Capacitor & Build APK
         working-directory: ./client
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android
-          npx cap init "ChatApp" "com.andullah.chatapp" --web-dir=dist || true
-          npx cap add android || true
+          npx cap init "ChatApp" "com.andullah.chatapp" --web-dir=dist
+          npx cap add android
           npx cap sync android
-      - name: Build APK
-        working-directory: ./client/android
-        run: |
+          cd android
           chmod +x gradlew
           ./gradlew assembleDebug
       - name: Upload APK
