@@ -24,6 +24,19 @@ jobs:
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android
           npx cap init "ChatApp" "com.andullah.chatapp" --web-dir=dist
+          cat << 'CAP' > capacitor.config.ts
+          import type { CapacitorConfig } from '@capacitor/cli';
+          const config: CapacitorConfig = {
+            appId: 'com.andullah.chatapp',
+            appName: 'ChatApp',
+            webDir: 'dist',
+            server: {
+              url: 'http://localhost:4000',
+              cleartext: true
+            }
+          };
+          export default config;
+          CAP
           npx cap add android
           npx cap sync android
           echo 'configurations.all { resolutionStrategy { force "org.jetbrains.kotlin:kotlin-stdlib:1.8.22", "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22" } }' >> android/app/build.gradle
