@@ -6,7 +6,7 @@ import Sidebar from './components/Sidebar';
 import ChatWindow from './components/ChatWindow';
 import NewChatModal from './components/NewChatModal';
 import { connect, disconnect, getSocket } from './socket';
-import { api } from './api';
+import { api, apiUrl } from './api';
 import { Conversation, Message, User } from './types';
 
 function ChatApp() {
@@ -153,7 +153,7 @@ function ChatApp() {
   }, [activeConvId]);
 
   const handleCreateChat = useCallback(async (name: string, memberIds: string[]) => {
-    const endpoint = name ? '/api/conversations/group' : '/api/conversations';
+    const endpoint = apiUrl(name ? '/api/conversations/group' : '/api/conversations');
     const body = name ? { name, memberIds } : { participantId: memberIds[0] };
     await fetch(endpoint, {
       method: 'POST',

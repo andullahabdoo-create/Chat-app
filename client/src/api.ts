@@ -7,6 +7,12 @@ export interface AuthResponse {
 
 const TOKEN_KEY = 'messaging_token';
 
+const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') || '';
+
+export function apiUrl(path: string): string {
+  return `${API_BASE}${path}`;
+}
+
 export function saveToken(token: string) {
   localStorage.setItem(TOKEN_KEY, token);
 }
@@ -24,7 +30,7 @@ async function request<T>(path: string, opts: RequestInit = {}): Promise<T> {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...((opts.headers as Record<string, string>) || {})
   };
-  const res = await fetch(path, { ...opts, headers });
+  const res = await fetch(apiUrl(path), { ...opts, headers });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error((data as any)?.error || `HTTP ${res.status}`);
   return data as T;
@@ -69,7 +75,7 @@ export const api = {
     const token = getToken();
     const form = new FormData();
     form.append('file', file);
-    const res = await fetch('/api/upload', {
+    const res = await fetch(apiUrl('/api/upload'), {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: form
