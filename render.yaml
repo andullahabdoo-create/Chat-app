@@ -1,7 +1,11 @@
 services:
   - type: web
-    name: chatter-server
+    name: chatapp
     runtime: node
     rootDir: server
-    buildCommand: npm install
+    buildCommand: npm install && npm run build
     startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true

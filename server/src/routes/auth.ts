@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { db, get, run, all } from '../db';
-import { hashPassword, comparePassword, signToken, userToPublic } from '../auth';
+import { hashPassword, comparePassword, signToken, userToPublic, authMiddleware } from '../auth';
 import { uuid, now } from '../utils';
 
 const router = Router();
@@ -37,12 +37,12 @@ router.post('/login', (req: Request, res: Response) => {
   res.json({ token, user: userToPublic(user) });
 });
 
-router.get('/me', (req: any, res: Response) => {
+router.get('/me', authMiddleware, (req: any, res: Response) => {
   const user = get('SELECT id, username, displayName, avatarColor, status, lastSeen FROM users WHERE id = ?', [(req as any).user.id]);
   res.json({ user: userToPublic(user) });
 });
 
-router.get('/', (req: any, res: Response) => {
+router.get('/', authMiddleware, (req: any, res: Response) => {
   const users = all('SELECT id, username, displayName, avatarColor, status, lastSeen FROM users ORDER BY displayName || username LIMIT 50');
   res.json({ users });
 });

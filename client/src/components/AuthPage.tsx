@@ -22,7 +22,8 @@ export default function AuthPage() {
         await register(username, password, displayName);
       }
     } catch (err: any) {
-      setError(err?.message || 'Something went wrong');
+      const msg = err?.message || 'Something went wrong';
+      setError(msg === 'Failed to fetch' ? 'Cannot reach the server. Check your internet connection.' : msg);
     } finally {
       setBusy(false);
     }

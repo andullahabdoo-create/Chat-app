@@ -34,11 +34,11 @@ router.post('/login', (req, res) => {
     const token = (0, auth_1.signToken)(user.id);
     res.json({ token, user: (0, auth_1.userToPublic)(user) });
 });
-router.get('/me', (req, res) => {
+router.get('/me', auth_1.authMiddleware, (req, res) => {
     const user = (0, db_1.get)('SELECT id, username, displayName, avatarColor, status, lastSeen FROM users WHERE id = ?', [req.user.id]);
     res.json({ user: (0, auth_1.userToPublic)(user) });
 });
-router.get('/', (req, res) => {
+router.get('/', auth_1.authMiddleware, (req, res) => {
     const users = (0, db_1.all)('SELECT id, username, displayName, avatarColor, status, lastSeen FROM users ORDER BY displayName || username LIMIT 50');
     res.json({ users });
 });

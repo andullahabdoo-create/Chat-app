@@ -17,7 +17,7 @@ jobs:
       - name: Install & Build Web
         working-directory: ./client
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://chatter-server.onrender.com' }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://chatapp.onrender.com' }}
         run: |
           npm install
           npm run build

@@ -16,7 +16,12 @@ const messages_1 = __importDefault(require("./routes/messages"));
 const upload_1 = __importDefault(require("./routes/upload"));
 const app = (0, express_1.default)();
 exports.app = app;
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 app.use(express_1.default.json({ limit: '10mb' }));
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 app.use('/api/auth', auth_1.default);
