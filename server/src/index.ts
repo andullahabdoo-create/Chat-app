@@ -31,9 +31,7 @@ app.use('/api/upload', uploadRoutes);
 // Serve uploads
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-const server = app.listen(Number(process.env.PORT || 4000), () => {
-  console.log(`Server listening on port ${process.env.PORT || 4000}`);
-});
+
 
 const io = new Server(server, {
   cors: { origin: true, credentials: true }
@@ -42,3 +40,9 @@ const io = new Server(server, {
 attachSocket(io);
 
 export { app, server, io };
+const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
+app.listen(Number(PORT), '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
