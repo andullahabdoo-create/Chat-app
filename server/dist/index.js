@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.io = exports.server = exports.app = void 0;
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const http_1 = __importDefault(require("http"));
+const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const socket_io_1 = require("socket.io");
 const socket_1 = require("./socket");
@@ -31,13 +33,21 @@ app.use('/api/messages', messages_1.default);
 app.use('/api/upload', upload_1.default);
 // Serve uploads
 app.use('/uploads', express_1.default.static(path_1.default.join(process.cwd(), 'uploads')));
-const server = app.listen(Number(process.env.PORT || 4000), () => {
-    console.log(`Server listening on port ${process.env.PORT || 4000}`);
-});
+// Serve the built client (set CLIENT_DIR when serving the SPA from this server)
+const clientDir = process.env.CLIENT_DIR || path_1.default.join(process.cwd(), 'public');
+if (fs_1.default.existsSync(path_1.default.join(clientDir, 'index.html'))) {
+    app.use(express_1.default.static(clientDir));
+    app.get('*', (_req, res) => res.sendFile(path_1.default.join(clientDir, 'index.html')));
+}
+const server = http_1.default.createServer(app);
 exports.server = server;
 const io = new socket_io_1.Server(server, {
     cors: { origin: true, credentials: true }
 });
 exports.io = io;
 (0, socket_1.attachSocket)(io);
+const PORT = process.env.PORT || 3000;
+server.listen(Number(PORT), '0.0.0.0', () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 //# sourceMappingURL=index.js.map

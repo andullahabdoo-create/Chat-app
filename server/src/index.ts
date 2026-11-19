@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import { Server } from 'socket.io';
@@ -31,7 +32,14 @@ app.use('/api/upload', uploadRoutes);
 // Serve uploads
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
+// Serve the built client (set CLIENT_DIR when serving the SPA from this server)
+const clientDir = process.env.CLIENT_DIR || path.join(process.cwd(), 'public');
+if (fs.existsSync(path.join(clientDir, 'index.html'))) {
+  app.use(express.static(clientDir));
+  app.get('*', (_req, res) => res.sendFile(path.join(clientDir, 'index.html')));
+}
 
+const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: { origin: true, credentials: true }
@@ -40,9 +48,8 @@ const io = new Server(server, {
 attachSocket(io);
 
 export { app, server, io };
+
 const PORT = process.env.PORT || 3000;
-const PORT = process.env.PORT || 3000;
-app.listen(Number(PORT), '0.0.0.0', () => {
+server.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
